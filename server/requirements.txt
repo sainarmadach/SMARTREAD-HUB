@@ -19,3 +19,4 @@ pydantic
 requests
 readability-lxml
 lxml_html_clean
+beautifulsoup4
