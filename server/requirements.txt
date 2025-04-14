@@ -1,9 +1,21 @@
 fastapi
 uvicorn[standard]
 python-multipart
-pypdf
-PyMuPDF
+
+# PDF parsing
+PyPDF2
+PyMuPDF  # also known as "fitz"
+pypdf    # Optional; PyMuPDF is more powerful if you're already using it
+
+# AI & NLP
 transformers
 langchain
-transformers
 nltk
+keybert
+scikit-learn
+
+# Utilities
+pydantic
+requests
+readability-lxml
+lxml_html_clean
