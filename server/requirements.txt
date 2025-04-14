@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pypdf
+PyMuPDF
+transformers
+langchain
+transformers
+nltk

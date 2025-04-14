@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "AI Summarizer",
+  "version": "1.0",
+  "description": "Summarize the content of any web page with a click.",
+  "permissions": ["scripting", "activeTab"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ]
+}
