@@ -72,8 +72,9 @@ const UploadForm = ({ setSummary, darkMode }: Props) => {
 
       navigate('/summary')
     } catch (err: any) {
-      console.error('❌ Submit error:', err)
-      alert('Something went wrong!\n' + (err.message || err))
+      console.error('❌ Submit error (raw):', err);
+      console.log('👉 Error type:', typeof err);
+      alert('Something went wrong!\nCheck console for details.');
     } finally {
       setIsLoading(false)
     }

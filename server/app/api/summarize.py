@@ -4,6 +4,7 @@ from app.services.summarizer import summarize_text  # This is an async function
 from app.utils.keywords import extract_keywords
 from app.utils.cleaner import html_to_text
 from app.utils.scraper import fetch_url_content
+from app.utils.pdf import extract_text_from_pdf
 
 router = APIRouter()
 
