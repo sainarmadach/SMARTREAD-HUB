@@ -1,10 +1,18 @@
 import asyncio
 from transformers import pipeline
+import torch
 
-# Initialize the summarization pipeline once
-summarizer_model = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
+# Select device
+device = 0 if torch.cuda.is_available() else -1
 
-# Asynchronous helper: Summarize one chunk of text
+# Load summarization model
+summarizer_model = pipeline(
+    "summarization",
+    model="sshleifer/distilbart-cnn-12-6",
+    device=device
+)
+
+# Async function to summarize a chunk of text
 async def summarize_chunk(chunk: str, min_length: int, max_length: int) -> str:
     loop = asyncio.get_running_loop()
     result = await loop.run_in_executor(
@@ -13,9 +21,9 @@ async def summarize_chunk(chunk: str, min_length: int, max_length: int) -> str:
     )
     return result[0]['summary_text']
 
-# Asynchronous function to summarize a large text by splitting it into chunks
-async def summarize_text_async(text: str, mode: str, length: str, language: str) -> str:
-    # Define length parameters based on selection
+# Main async summarization function
+async def summarize_text(text: str, mode: str, length: str, language: str) -> str:
+    # Adjust length based on user choice
     if length == "short":
         min_len, max_len = 30, 80
     elif length == "medium":
@@ -25,17 +33,20 @@ async def summarize_text_async(text: str, mode: str, length: str, language: str)
     else:
         min_len, max_len = 60, 150
 
-    # Break text into manageable chunks (here, 1000 characters each)
-    chunk_size = 1000
-    chunks = [text[i : i + chunk_size] for i in range(0, len(text), chunk_size)]
-    
-    # Process all chunks concurrently
-    summaries = await asyncio.gather(*(summarize_chunk(chunk, min_len, max_len) for chunk in chunks))
-    
-    # Combine summaries into a final summary
-    final_summary = " ".join(summaries)
-    return final_summary
+    # Chunk the text for long content
+    chunk_size = 1500
+    chunks = [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
 
-# Make the summarization function async (this is the one you'll await in your endpoint)
-async def summarize_text(text: str, mode: str, length: str, language: str) -> str:
-    return await summarize_text_async(text, mode, length, language)
+    # Process all chunks concurrently
+    summaries = await asyncio.gather(
+        *(summarize_chunk(chunk, min_len, max_len) for chunk in chunks)
+    )
+
+    # Merge all chunk summaries
+    summary = " ".join(summaries)
+
+    # ✅ Bullet point formatting
+    if mode == "bullet":
+        summary = "• " + summary.replace('. ', '.\n• ')
+
+    return summary
